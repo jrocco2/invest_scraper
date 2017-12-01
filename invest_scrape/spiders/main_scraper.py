@@ -9,14 +9,19 @@ import re
 class InvestScrape(scrapy.Spider):
     name = "invest_scrape"
 
-    # First Start Url
+    # Define where the spider begins
     start_urls = ["https://www.investing.com/economic-calendar/"]
 
-    """The parse() method will be called to handle each of the requests for the start_urls,
-    even though we haven’t explicitly told Scrapy to do so. This happens because parse() is
-    Scrapy’s default callback method, which is called for requests without an explicitly assigned callback."""
 
     def parse(self, response):
+        """
+        Automatically called to handle each of the requests for the start_urls.
+
+        Sends a POST to the calendar with desired filters.
+
+        :param response: The GET response from the start url
+        :return: response from POST and passes it to economic_calendar()
+        """
 
         yield scrapy.FormRequest("https://www.investing.com/economic-calendar/Service/getCalendarFilteredData",
                                  formdata={
@@ -41,19 +46,23 @@ class InvestScrape(scrapy.Spider):
 
     def economic_calendar(self, response):
         """
-            Extract the information needed for the economic calendar database
+        Extract desired information from the response and send it down the pipeline.
+
+        :param response: Information retrieved from FormRequest() in parse()
+        :return: InvestingScraperItem instance to pipeline
         """
-        ## TODO: Add ALL DAY Events to scrape
         item = InvestingScraperItem()
         data = response.body.decode('utf-8')
         data = json.loads(data)
 
+        # Extract fields from html using xpath()
         containers = Selector(text=data['data']).xpath("//tr[contains(@class,'js-event-item')]")
         for info in containers:
 
                 item['id'] = int(info.xpath(".//@event_attr_id").extract_first())
                 item['date'] = info.xpath(".//@data-event-datetime").extract_first()
                 item['currency'] = info.xpath(".//td[contains(@class,'left flagCur noWrap')]/text()").extract_first().strip()
+
                 ## TODO: Change volatility to integer
                 item['volatility'] = info.xpath(
                     ".//td[contains(@class,'left textNum sentiment noWrap')]/@title").extract_first()

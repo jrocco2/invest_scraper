@@ -1,9 +1,8 @@
 import scrapy
 
-
 class InvestingScraperItem(scrapy.Item):
     """
-    Define the fields that will be sent to the Postgres DB
+    The fields that will be scraped from the website
     """
     id = scrapy.Field()
     date = scrapy.Field()
@@ -16,6 +15,6 @@ class InvestingScraperItem(scrapy.Item):
 
     def __str__(self):
         """
-        Overload the print method to avoid printing to0 many details in the log
+        Overload the print method to avoid printing too many details in the log
         """
         return ""
