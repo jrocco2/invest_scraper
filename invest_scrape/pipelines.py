@@ -1,7 +1,7 @@
 import dataset
 import pandas as pd
 import redis
-
+from invest_scrape.settings import POSTGRES_DB_URL, POSTGRES_TABLE_NAME, REDIS_HOST, REDIS_PORT, REDIS_PUBLISH_NAME
 
 class InvestingScraperPipeline(object):
     """
@@ -16,18 +16,16 @@ class InvestingScraperPipeline(object):
         """
 
         # Initialise Redis
-        self.redis_conn = redis.StrictRedis()
+        self.redis_conn = redis.StrictRedis(host=REDIS_HOST, port=REDIS_PORT)
 
         # Initialise Database
-        self.url = 'postgresql://joseph:password@localhost:5432/postgres'
-        self.db = dataset.connect(self.url)
-        self.table_name = 'economic_calendar'
+        self.db = dataset.connect(POSTGRES_DB_URL)
 
         # Create table if it does not exist otherwise connect to existing table
-        if self.table_name in self.db.tables:
-            self.table = self.db.load_table(self.table_name)
+        if POSTGRES_TABLE_NAME in self.db.tables:
+            self.table = self.db.load_table(POSTGRES_TABLE_NAME)
         else:
-            self.form_table(self.table_name)
+            self.form_table(POSTGRES_TABLE_NAME)
 
     def process_item(self, item, spider):
         """
@@ -38,8 +36,8 @@ class InvestingScraperPipeline(object):
         """
 
         # Query the database to see if the item exists in the DB.
-        query = "SELECT * FROM " + self.table_name + " WHERE id = " + str(item['id']) + ";"
-        df = pd.read_sql_query(query, self.url)
+        query = "SELECT * FROM " + POSTGRES_TABLE_NAME + " WHERE id = " + str(item['id']) + ";"
+        df = pd.read_sql_query(query, POSTGRES_DB_URL)
 
         # If the item does not exist, insert it.
         if len(df.index) == 0:
@@ -89,11 +87,11 @@ class InvestingScraperPipeline(object):
                 self.db.commit()
 
                 # If commit is successful publish to the redis server
-                self.redis_conn.publish('economic-calendar', update_dict)
+                self.redis_conn.publish(REDIS_PUBLISH_NAME, update_dict)
 
             except:
                 self.db.rollback()
-                raise Exception('Transaction Failed: Rolling Back....')
+                raise Exception('Update Transaction Failed: Rolling Back....')
 
     def form_table(self, table_name):
         """
@@ -135,7 +133,7 @@ class InvestingScraperPipeline(object):
             # otherwise a new row is inserted in the table.
             self.table.insert(info)
             self.db.commit()
-            self.redis_conn.publish('economic-calendar', info)
+            self.redis_conn.publish(REDIS_PUBLISH_NAME, info)
         except:
             self.db.rollback()
-            raise Exception('Transaction Failed: Rolling Back....')
+            raise Exception('Insert Transaction Failed: Rolling Back....')

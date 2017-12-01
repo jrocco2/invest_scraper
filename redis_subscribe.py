@@ -3,9 +3,9 @@ import time
 
 r = redis.StrictRedis()
 p = r.pubsub()
-p.subscribe('economic-calendar')
+p.subscribe('economic_calendar')
 
-print("Waiting for updates from 'economic-calendar'")
+print("Waiting for updates from 'economic_calendar'")
 while True:
      message = p.get_message()
      if message:
