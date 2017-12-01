@@ -1,6 +1,6 @@
 # Investing Scraper
 
-Investing Crawler is an asynchronous webcrawler that utilises the Scrapy Framework. Its role is to scrape an economic calendar and automatically store the information in a Postgres database. Additionally, data can be subscribed to via Redis, allowing updates to be viewed in real time.
+Investing Scraper is an asynchronous webcrawler that utilises the Scrapy Framework. Its role is to scrape an economic calendar and automatically store the information in a Postgres database. Additionally, data can be subscribed to via Redis, allowing updates to be viewed in real time.
 
 ## Getting Started
 
@@ -14,7 +14,7 @@ git clone https://github.com/jrocco2/investing_crawler.git
 ```
 
 ### Package Requirements
-Investing Crawler has a few package requirements you will need to install if you dont have them.
+Investing Scraper has a few package requirements you will need to install if you dont have them.
 
 [Scrapy](https://doc.scrapy.org/en/0.10.3/intro/overview.html) - To build the asynchronous framework.
 
