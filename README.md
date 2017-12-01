@@ -1,4 +1,4 @@
-# Investing Crawler
+# Investing Scraper
 
 Investing Crawler is an asynchronous webcrawler that utilises the Scrapy Framework. Its role is to scrape an economic calendar and automatically store the information in a Postgres database. Additionally, data can be subscribed to via Redis, allowing updates to be viewed in real time.
 
