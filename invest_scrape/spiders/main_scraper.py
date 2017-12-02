@@ -9,6 +9,9 @@ import re
 class InvestScrape(scrapy.Spider):
     name = "invest_scrape"
 
+    custom_settings = {
+        'ITEM_PIPELINES': {'invest_scrape.pipelines.InvestingScraperPipeline': 300}
+    }
     # Define where the spider begins
     start_urls = ["https://www.investing.com/economic-calendar/"]
 
@@ -81,36 +84,31 @@ class InvestScrape(scrapy.Spider):
 
                 # Separate units from integer
                 actual = re.sub(r'\xa0', '', info.xpath(".//td[starts-with(@id, 'eventActual_')]/text()").extract_first())
-                actual_unit = re.search('([A-Za-z]+)|(%)', actual)
-                if actual_unit:
-                    reg = re.compile(actual_unit.group())
-                    item['actual'] = re.sub(reg, '', actual)
-                    item['actual_unit'] = actual_unit.group()
-                else:
-                    item['actual'] = actual
-                    item['actual_unit'] = ''
+                actual_units = self.unit_splitter(actual)
+                item['actual'] = actual_units[0]
+                item['actual_unit'] = actual_units[1]
 
                 forecast = re.sub(r'\xa0', '',info.xpath(".//td[starts-with(@id, 'eventForecast_')]/text()").extract_first())
-                forecast_unit = re.search('([A-Za-z]+)|(%)', forecast)
-                if forecast_unit:
-                    reg = re.compile(forecast_unit.group())
-                    item['forecast'] = re.sub(reg, '', forecast)
-                    item['forecast_unit'] = forecast_unit.group()
-                else:
-                    item['forecast'] = forecast
-                    item['forecast_unit'] = ''
+                forecast_units = self.unit_splitter(forecast)
+                item['forecast'] = forecast_units[0]
+                item['forecast_unit'] = forecast_units[1]
 
                 previous = re.sub(r'\xa0', '',info.xpath(".//td[starts-with(@id, 'eventPrevious_')]/span/text()").extract_first())
-                previous_unit = re.search('([A-Za-z]+)|(%)', previous)
-                if previous_unit:
-                    reg = re.compile(previous_unit.group())
-                    item['previous'] = re.sub(reg, '', previous)
-                    item['previous_unit'] = previous_unit.group()
-                else:
-                    item['previous'] = actual
-                    item['previous_unit'] = ''
+                previous_units = self.unit_splitter(previous)
+                item['previous'] = previous_units[0]
+                item['previous_unit'] = previous_units[1]
+
 
                 yield item
+
+    def unit_splitter(self, number):
+        unit = re.search('([A-Za-z]+)|(%)', number)  # Check for units or %
+        if unit:  # If units are found
+            reg = re.compile(unit.group())  # Create regex to search unit
+            return [re.sub(reg, '', number), unit.group()]
+        else:
+            return [number, '']
+
 
     # def generate_dates(self, start_date, end_date):
     #     """
@@ -120,7 +118,7 @@ class InvestScrape(scrapy.Spider):
     #     :param end_date: ending date in this form: date(2011, 10, 12)
     #     :return: a list of dates that can be used to access website data
     #     """
-    #     # TODO: Fix static dates
+    #
     #
     #     def perdelta(start, end, delta):
     #         curr = start
@@ -156,3 +154,4 @@ class InvestScrape(scrapy.Spider):
     #     }
     #
     #     return formdata
+

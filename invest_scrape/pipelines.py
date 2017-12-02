@@ -144,3 +144,7 @@ class InvestingScraperPipeline(object):
         except:
             self.db.rollback()
             raise Exception('Insert Transaction Failed: Rolling Back....')
+
+class EarningScraperPipeline(object):
+    def process_item(self, item, spider):
+        return item

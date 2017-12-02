@@ -2,7 +2,7 @@ import scrapy
 
 class InvestingScraperItem(scrapy.Item):
     """
-    The fields that will be scraped from the website
+    Scraper item for economic calendar
     """
     id = scrapy.Field()
     date = scrapy.Field()
@@ -21,3 +21,24 @@ class InvestingScraperItem(scrapy.Item):
     #     Overload the print method to avoid printing too many details in the log
     #     """
     #     return ""
+
+
+class EarningScraperItem(scrapy.Item):
+    """
+    Scraper item for earnings calendar
+    """
+    id = scrapy.Field()
+    date = scrapy.Field()
+    country = scrapy.Field()
+    company = scrapy.Field()
+    short_code = scrapy.Field()
+    eps_actual = scrapy.Field()
+    eps_actual_units = scrapy.Field()
+    eps_forecast = scrapy.Field()
+    eps_forecast_units = scrapy.Field()
+    rev_actual = scrapy.Field()
+    rev_actual_units = scrapy.Field()
+    rev_forecast = scrapy.Field()
+    rev_forecast_units = scrapy.Field()
+    market_cap = scrapy.Field()
+    market_time = scrapy.Field()
