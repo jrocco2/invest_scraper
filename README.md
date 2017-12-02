@@ -52,7 +52,12 @@ From the root of the project run the following command in the terminal.
 scrapy crawl invest_scrape
 ```
 Congratulations! You just run your first job. A few things to note:
-1) Your Postgres Database will be now be populated with today's economic calendar data
+1) Your Postgres Database will be now be populated with today's economic calendar data. If you haven't already created the table in your database the crawler will have created it for you.
+
+You can run the economic_view.sql file to view current and upcoming events as well as compare 'actual' values to the 'forecast' values.
+
+![postgres_view](https://github.com/jrocco2/invest_scraper/blob/master/Postgres_view.JPG)
+
 2) You received a large logfile output in the terminal if you want to save that as a txt file you can do so by going into settings.py and uncommenting LOG_FILE. This will store the log information in the project's root directory as 'mylog.txt'
 ```
 #LOG_FILE = 'mylog.txt'
