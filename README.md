@@ -14,7 +14,7 @@ git clone https://github.com/jrocco2/investing_crawler.git
 ```
 
 ### Package Requirements
-Investing Scraper has a few package requirements you will need to install if you dont have them.
+Investing Scraper has a few package requirements you will need to install if you don't have them.
 
 [Scrapy](https://doc.scrapy.org/en/0.10.3/intro/overview.html) - To build the asynchronous framework.
 
@@ -53,7 +53,7 @@ scrapy crawl invest_scrape
 ```
 Congratulations! You just run your first job. A few things to note:
 1) Your Postgres Database will be now be populated with today's economic calendar data
-2) You recieved a large logfile output in the terminal if you want to save that as a txt file you can do so by going into settings.py and uncommenting LOG_FILE. This will store the log information in the project's root directory as 'mylog.txt'
+2) You received a large logfile output in the terminal if you want to save that as a txt file you can do so by going into settings.py and uncommenting LOG_FILE. This will store the log information in the project's root directory as 'mylog.txt'
 ```
 #LOG_FILE = 'mylog.txt'
 ```
@@ -71,16 +71,16 @@ In the project root directory run the 'scrapyd' command.
 ```
 scrapyd
 ```
-Then in the projects root directory run a seperate terminal with the following spiderkeeper commands package your crawler, to connect to the scrapyd server and deploy the user interface.
+Then in the projects root directory run a separate terminal with the following spiderkeeper commands package your crawler, to connect to the scrapyd server and deploy the user interface.
 ```
 python scrapyd-deploy --build-egg output.egg
 spiderkeeper --server=http://localhost:6800 --no-auth
 ```
-This will create a server at http://localhost:5000 you can now access via your broswer.
+This will create a server at http://localhost:5000 you can now access via your browser.
 
 ## Schedule
 
-Do the following in the SpiderKeepr UI:
+Do the following in the SpiderKeeper UI:
 
 1) Create a project with any name
 2) Upload the output.egg file in your root project directory

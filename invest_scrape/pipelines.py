@@ -55,7 +55,6 @@ class InvestingScraperPipeline(object):
         """
 
         # Convert DB row to dictionary.
-        # TODO: Fix date problem
         df['date'] = df['date'].dt.strftime("%Y/%m/%d %H:%M:%S")
         old_info = df.to_dict('records')[0]
 
@@ -64,11 +63,14 @@ class InvestingScraperPipeline(object):
                     id=item['id'],
                     date=item['date'],
                     currency=item['currency'],
-                    volatility=item['volatility'],
+                    importance=item['importance'],
                     event=item['event'],
                     actual=item['actual'],
+                    actual_unit=item['actual_unit'],
                     forecast=item['forecast'],
+                    forecast_unit=item['forecast_unit'],
                     previous=item['previous'],
+                    previous_unit=item['previous_unit'],
                     )
 
         # Check for differences between the two dictionaries
@@ -102,11 +104,14 @@ class InvestingScraperPipeline(object):
         self.table = self.db.create_table(table_name, primary_id='id', primary_type=self.db.types.integer)
         self.table.create_column('date', self.db.types.datetime)
         self.table.create_column('currency', self.db.types.string)
-        self.table.create_column('volatility', self.db.types.string)
+        self.table.create_column('importance', self.db.types.integer)
         self.table.create_column('event', self.db.types.string)
         self.table.create_column('actual', self.db.types.string)
+        self.table.create_column('actual_unit', self.db.types.string)
         self.table.create_column('forecast', self.db.types.string)
+        self.table.create_column('forecast_unit', self.db.types.string)
         self.table.create_column('previous', self.db.types.string)
+        self.table.create_column('previous_unit', self.db.types.string)
 
     def insert_transaction(self, item):
         """
@@ -116,16 +121,18 @@ class InvestingScraperPipeline(object):
         """
 
         info = dict(
-            id=item['id'],
-            date=item['date'],
-            currency=item['currency'],
-            volatility=item['volatility'],
-            event=item['event'],
-            actual=item['actual'],
-            forecast=item['forecast'],
-            previous=item['previous'],
-
-        )
+                    id=item['id'],
+                    date=item['date'],
+                    currency=item['currency'],
+                    importance=item['importance'],
+                    event=item['event'],
+                    actual=item['actual'],
+                    actual_unit=item['actual_unit'],
+                    forecast=item['forecast'],
+                    forecast_unit=item['forecast_unit'],
+                    previous=item['previous'],
+                    previous_unit=item['previous_unit'],
+                    )
 
         self.db.begin()
         try:

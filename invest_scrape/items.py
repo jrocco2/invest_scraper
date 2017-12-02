@@ -7,14 +7,17 @@ class InvestingScraperItem(scrapy.Item):
     id = scrapy.Field()
     date = scrapy.Field()
     currency = scrapy.Field()
-    volatility = scrapy.Field()
+    importance = scrapy.Field()
     event = scrapy.Field()
     actual = scrapy.Field()
+    actual_unit = scrapy.Field()
     forecast = scrapy.Field()
+    forecast_unit = scrapy.Field()
     previous = scrapy.Field()
+    previous_unit = scrapy.Field()
 
-    def __str__(self):
-        """
-        Overload the print method to avoid printing too many details in the log
-        """
-        return ""
+    # def __str__(self):
+    #     """
+    #     Overload the print method to avoid printing too many details in the log
+    #     """
+    #     return ""

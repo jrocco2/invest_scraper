@@ -36,7 +36,7 @@ class InvestScrape(scrapy.Spider):
                                                    '123', '61', '143', '4', '5', '138', '178', '84', '75'],
                                      'timeZone': '55',
                                      'timeFilter': 'timeRemain',
-                                     'currentTab': 'today',
+                                     'currentTab': 'yesterday',
                                      'submitFilters': '1',
                                      'limit_from': '0',
                                  },
@@ -51,25 +51,64 @@ class InvestScrape(scrapy.Spider):
         :param response: Information retrieved from FormRequest() in parse()
         :return: InvestingScraperItem instance to pipeline
         """
+
         item = InvestingScraperItem()
         data = response.body.decode('utf-8')
         data = json.loads(data)
 
         # Extract fields from html using xpath()
         containers = Selector(text=data['data']).xpath("//tr[contains(@class,'js-event-item')]")
+        print(len(containers))
         for info in containers:
 
                 item['id'] = int(info.xpath(".//@event_attr_id").extract_first())
                 item['date'] = info.xpath(".//@data-event-datetime").extract_first()
                 item['currency'] = info.xpath(".//td[contains(@class,'left flagCur noWrap')]/text()").extract_first().strip()
 
-                ## TODO: Change volatility to integer
-                item['volatility'] = info.xpath(
-                    ".//td[contains(@class,'left textNum sentiment noWrap')]/@title").extract_first()
+                # Convert High, Moderate, Low to 1,2,3
+                importance = info.xpath(".//td[contains(@class,'left textNum sentiment noWrap')]/@title").extract_first()
+                level = re.search(r'(Low)|(High)|(Moderate)', importance)
+                if level.group() == 'Low':
+                    item['importance'] = 1
+                elif level.group() == 'Moderate':
+                    item['importance'] = 2
+                elif level.group() == 'High':
+                    item['importance'] = 3
+                else:
+                    item['importance'] = None
+
                 item['event'] = info.xpath(".//a[contains(@target,'_blank')]/text()").extract_first().strip()
-                item['actual'] = re.sub(r"\xa0", '', info.xpath(".//td[starts-with(@id, 'eventActual_')]/text()").extract_first())
-                item['forecast'] = re.sub(r"\xa0", '',info.xpath(".//td[starts-with(@id, 'eventForecast_')]/text()").extract_first())
-                item['previous'] = re.sub(r"\xa0", '',info.xpath(".//td[starts-with(@id, 'eventPrevious_')]/span/text()").extract_first())
+
+                # Separate units from integer
+                actual = re.sub(r'\xa0', '', info.xpath(".//td[starts-with(@id, 'eventActual_')]/text()").extract_first())
+                actual_unit = re.search('([A-Za-z]+)|(%)', actual)
+                if actual_unit:
+                    reg = re.compile(actual_unit.group())
+                    item['actual'] = re.sub(reg, '', actual)
+                    item['actual_unit'] = actual_unit.group()
+                else:
+                    item['actual'] = actual
+                    item['actual_unit'] = ''
+
+                forecast = re.sub(r'\xa0', '',info.xpath(".//td[starts-with(@id, 'eventForecast_')]/text()").extract_first())
+                forecast_unit = re.search('([A-Za-z]+)|(%)', forecast)
+                if forecast_unit:
+                    reg = re.compile(forecast_unit.group())
+                    item['forecast'] = re.sub(reg, '', forecast)
+                    item['forecast_unit'] = forecast_unit.group()
+                else:
+                    item['forecast'] = forecast
+                    item['forecast_unit'] = ''
+
+                previous = re.sub(r'\xa0', '',info.xpath(".//td[starts-with(@id, 'eventPrevious_')]/span/text()").extract_first())
+                previous_unit = re.search('([A-Za-z]+)|(%)', previous)
+                if previous_unit:
+                    reg = re.compile(previous_unit.group())
+                    item['previous'] = re.sub(reg, '', previous)
+                    item['previous_unit'] = previous_unit.group()
+                else:
+                    item['previous'] = actual
+                    item['previous_unit'] = ''
 
                 yield item
 
