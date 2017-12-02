@@ -63,7 +63,7 @@ python redis_subscribe.py
 ```
 
 ## Deploy
-![start_up](https://github.com/jrocco2/investing_crawler/blob/master/SpiderKeeper1.JPG)
+![start_up](https://github.com/jrocco2/invest_scraper/blob/master/SpiderKeeper1.JPG)
 
 Now that the crawler is setup we can use the Scraypd and SpiderKeeper packages to keep the project running in the background as well as schedule periodic jobs and montior performance.
 
@@ -88,7 +88,7 @@ Do the following in the SpiderKeeper UI:
 4) Click 'Choose Minute' and set to 'every minute' and click 'Create'
 5) Done! Go to the 'Dashboard' to watch the jobs execute every minute.
 
-![running_jobs](https://github.com/jrocco2/investing_crawler/blob/master/SpiderKeeper6.JPG)
+![running_jobs](https://github.com/jrocco2/invest_scraper/blob/master/SpiderKeeper6.JPG)
 
 ## Crawl Speed Check
 In the dashboard you can see the log files. Opening the log files gives lots of valuable information including the start and end time for processing. Although it varies depending on the machine, my computer runs each job in 6-8 seconds.
