@@ -21,7 +21,7 @@ There is a script shown in the <b>Install Packages</b> section that allows you t
 
 ## Getting Started in 3 Steps
 
-The following steps will get you up and running with the Investing Crawler. Note: this has only been tested with Python 3.5.3 from Anaconda
+The following steps will get you up and running with the Investing Crawler. Note: this has only been tested with Python 3.5.3 from Anaconda.
 
 ### 1. Clone Repository
 
@@ -31,7 +31,6 @@ git clone https://github.com/jrocco2/invest_scraper.git
 ```
 
 ### 2. Install Packages
-Requirements:
 
 Investing Scraper requires the packages listed above. IF you dont have them run the command below in your root directory to quickly dowload all the packages.
 
@@ -72,7 +71,7 @@ If you ran the invest_scrape crawler, you can run the economic_view.sql file to 
 
 ![postgres_view](https://github.com/jrocco2/invest_scraper/blob/master/screenshots/Postgres_view.JPG)
 
-2) You received a large logfile output in the terminal if you want to save that as a txt file you can do so by going into settings.py and uncommenting LOG_FILE. This will store the log information in the project's root directory as 'mylog.txt'
+2) You received a large logfile output in the terminal if you want to save that as a txt file you can do so by going into settings.py and uncommenting LOG_FILE. This will store the log information in the project's root directory as 'mylog.txt'.
 ```
 #LOG_FILE = 'mylog.txt'
 ```
@@ -84,7 +83,7 @@ python redis_subscribe.py
 ## Deploy
 ![start_up](https://github.com/jrocco2/invest_scraper/blob/master/screenshots/SpiderKeeper1.JPG)
 
-Now that the crawler is setup we can use the Scraypd and SpiderKeeper packages to keep the project running in the background as well as schedule periodic jobs and montior performance.
+Now that the crawler is setup, we can use the Scraypd and SpiderKeeper packages to keep the project running in the background as well as schedule periodic jobs and montior performance.
 
 In the project root directory run the 'scrapyd' command.
 ```
@@ -101,11 +100,11 @@ This will create a server at http://localhost:5000 you can now access via your b
 
 Do the following in the SpiderKeeper UI:
 
-1) Create a project with any name
-2) Upload the output.egg file generated in the previous section
-3) Go to 'Periodic Jobs' then click 'Add Job' in the right hand corner
-4) Select one of your spiders ('invest_scrape', 'earn_scrape', 'news_scrape'  )
-5) Click 'Choose Minute' and set to 'every minute' and click 'Create'
+1) Create a project with any name.
+2) Upload the output.egg file generated in the previous section.
+3) Go to 'Periodic Jobs' then click 'Add Job' in the right hand corner.
+4) Select one of your spiders ('invest_scrape', 'earn_scrape', 'news_scrape'  ).
+5) Click 'Choose Minute' and set to 'every minute' and click 'Create'.
 6) Done! Go to the 'Dashboard' to watch the jobs execute every minute.
 
 ![running_jobs](https://github.com/jrocco2/invest_scraper/blob/master/screenshots/SpiderKeeper6.JPG)
