@@ -83,15 +83,16 @@ spiderkeeper --server=http://localhost:6800 --no-auth
 ```
 This will create a server at http://localhost:5000 you can now access via your browser.
 
-## Schedule
+## Schedule - 1 Minute periodic jobs
 
 Do the following in the SpiderKeeper UI:
 
 1) Create a project with any name
-2) Upload the output.egg file in your root project directory
+2) Upload the output.egg file generated in the previous section
 3) Go to 'Periodic Jobs' then click 'Add Job' in the right hand corner
-4) Click 'Choose Minute' and set to 'every minute' and click 'Create'
-5) Done! Go to the 'Dashboard' to watch the jobs execute every minute.
+4) Select one of your spiders ('invest_scrape', 'earn_scrape', 'news_scrape'  )
+5) Click 'Choose Minute' and set to 'every minute' and click 'Create'
+6) Done! Go to the 'Dashboard' to watch the jobs execute every minute.
 
 ![running_jobs](https://github.com/jrocco2/invest_scraper/blob/master/SpiderKeeper6.JPG)
 
