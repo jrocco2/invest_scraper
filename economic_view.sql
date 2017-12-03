@@ -37,5 +37,5 @@ SELECT date::DATE as Date,
         END
       as Previous
 
-FROM  economic_calendar;
+FROM  economic_calendar
 WHERE Date = timeofday()::DATE;

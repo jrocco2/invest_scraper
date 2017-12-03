@@ -36,9 +36,9 @@ class InvestScrape(scrapy.Spider):
                                                    '53', '38', '170', '100', '56', '80', '52', '238', '36', '90', '112',
                                                    '110', '11', '26', '162', '9', '12', '46', '85', '41', '202', '63',
                                                    '123', '61', '143', '4', '5', '138', '178', '84', '75'],
-                                     'timeZone': '55',
+                                     'timeZone': '55',  # GMT Time
                                      'timeFilter': 'timeRemain',
-                                     'currentTab': 'tomorrow',
+                                     'currentTab': 'today',
                                      'submitFilters': '1',
                                      'limit_from': '0',
                                  },

@@ -60,8 +60,6 @@ class DatabaseComponents:
 
         self.db.begin()
         try:
-            # If rows with matching keys (['id']) exist they will be updated,
-            # otherwise a new row is inserted in the table.
             table.insert(info)
             self.db.commit()
             self.redis_conn.publish(self.publish_name, info)
@@ -77,11 +75,11 @@ class InvestingScraperPipeline(DatabaseComponents):
     """
 
     def __init__(self):
-        DatabaseComponents.__init__(self, 'economic_calendar', 'economic_calendar')
         """
         Initializes the database connection and redis server. Then the table is
         loaded or created.
         """
+        DatabaseComponents.__init__(self, 'economic_calendar', 'economic_calendar')
 
         # Create table if it does not exist otherwise connect to existing table
         if self.table_name in self.db.tables:
@@ -206,5 +204,60 @@ class EarningScraperPipeline(DatabaseComponents):
             df['date'] = df['date'].dt.strftime("%Y/%m/%d %H:%M:%S")
             old_info = df.to_dict('records')[0]
             self.update_transaction(item, new_info, old_info, self.table)
+
+        return item
+
+
+class NewsScraperPipeline(DatabaseComponents):
+    """
+    Pipeline to retrieve scraped fields from NewsScraperItem instance and
+    send them to a Postgres database and redis server.
+    """
+
+    def __init__(self):
+        """
+        Initializes the database connection and redis server. Then the table is
+        loaded or created.
+        """
+        DatabaseComponents.__init__(self, 'market_news', 'market_news')
+
+        # Create table if it does not exist otherwise connect to existing table
+        if self.table_name in self.db.tables:
+            self.table = self.db.load_table(self.table_name)
+        else:
+            self.table = self.db.create_table(self.table_name, primary_id='id', primary_type=self.db.types.integer)
+            self.table.create_column('date', self.db.types.datetime)
+            self.table.create_column('title', self.db.types.string)
+            self.table.create_column('author', self.db.types.string)
+            self.table.create_column('text', self.db.types.string)
+            self.table.create_column('link', self.db.types.string)
+
+    def process_item(self, item, spider):
+        """
+        Automatically called after an item has been returned/yielded from a spider.
+        It's where the pipeline processing begins.
+
+        Here new rows are inserted into the database.
+        """
+
+        # Convert scraped item to dictionary.
+        new_info = dict(
+            id=item['id'],
+            date=item['date'],
+            title=item['title'],
+            author=item['author'],
+            text=item['text'],
+            link=item['link'],
+
+        )
+        if not self.table.find_one(id=new_info['id']):  # If pk doesn't exist insert row
+            self.db.begin()
+            try:
+                self.table.insert(new_info)
+                self.db.commit()
+                self.redis_conn.publish(self.publish_name, new_info)
+            except:
+                self.db.rollback()
+                raise Exception('Insert Transaction Failed: Rolling Back....')
 
         return item

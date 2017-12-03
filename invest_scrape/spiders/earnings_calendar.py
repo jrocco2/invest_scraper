@@ -5,12 +5,10 @@ from scrapy.selector import Selector
 import re
 from datetime import datetime
 
-class InvestScrape(scrapy.Spider):
+
+class EarnScrape(scrapy.Spider):
     name = "earn_scrape"
 
-    # custom_settings = {
-    #     'ITEM_PIPELINES': {'invest_scrape.pipelines.InvestingScraperPipeline': 300}
-    # }
     # Define where the spider begins
     start_urls = ["https://www.investing.com/earnings-calendar/"]
     custom_settings = {
@@ -36,7 +34,7 @@ class InvestScrape(scrapy.Spider):
                                                    '100', '56', '52', '238', '36', '90', '112', '110', '11', '26',
                                                    '162', '9', '12', '46', '41', '202', '63', '123', '61', '143', '4',
                                                    '5', '138', '178', '75'],
-                                     'currentTab': 'yesterday',
+                                     'currentTab': 'today',
                                      'submitFilters': '1',
                                      'limit_from': '0',
                                  },
@@ -57,19 +55,22 @@ class InvestScrape(scrapy.Spider):
 
         # Extract fields from html using xpath()
         containers = Selector(text=data['data']).xpath("//tr")
+        date = datetime.now().strftime("%Y/%m/%d %H:%M:%S")
+
         for info in containers:
+            id_check = info.xpath(".//@_p_pid").extract_first()
             if info.xpath(".//td[contains(@class, 'theDay')]"):
                 date = info.xpath(".//td[contains(@class, 'theDay')]/text()").extract_first()
                 date = datetime.strptime(date, "%A, %B %d, %Y").strftime("%Y/%m/%d %H:%M:%S")
-            else:
-                item['id'] = info.xpath(".//@_p_pid").extract_first()
+            elif id_check:
+                item['id'] = id_check
                 item['date'] = date
                 item['country'] = info.xpath(".//td[contains(@class, 'flag')]/span/@title").extract_first()
                 item['company'] = info.xpath(".//td[contains(@class, 'earnCalCompany')]/span/text()").extract_first()
                 item['short_code'] = info.xpath(".//td[contains(@class, 'earnCalCompany')]/a/text()").extract_first()
                 item['market_cap'] = info.xpath(".//td[contains(@class,'right')]/text()").extract_first()
                 # Where 1 = Before Market Open, 2 = During Market, 3 = After Market Close
-                item['market_time'] = int(info.xpath(".//@data-value").extract_first())
+                item['market_time'] = info.xpath(".//@data-value").extract_first()
 
                 eps_actual = info.xpath(".//td[contains(@class,'eps_actual')]/text()").extract_first()
                 item['eps_actual'] = eps_actual
@@ -85,8 +86,8 @@ class InvestScrape(scrapy.Spider):
 
                 rev_forecast = re.sub(r'/\xa0\xa0', '', forecasts[1])
                 rev_forecast_units = self.unit_splitter(rev_forecast)
-                item['rev_forecast'] = rev_actual_units[0]
-                item['rev_forecast_units'] = rev_actual_units[1]
+                item['rev_forecast'] = rev_forecast_units[0]
+                item['rev_forecast_units'] = rev_forecast_units[1]
 
                 yield item
 

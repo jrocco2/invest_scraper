@@ -40,3 +40,15 @@ class EarningScraperItem(scrapy.Item):
     rev_forecast_units = scrapy.Field()
     market_cap = scrapy.Field()
     market_time = scrapy.Field()
+
+
+class NewsScraperItem(scrapy.Item):
+    """
+    Scraper item for earnings calendar
+    """
+    id = scrapy.Field()
+    date = scrapy.Field()
+    title = scrapy.Field()
+    author = scrapy.Field()
+    text = scrapy.Field()
+    link = scrapy.Field()
