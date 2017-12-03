@@ -47,7 +47,7 @@ class EarnScrape(scrapy.Spider):
         Extract desired information from the response and send it down the pipeline.
 
         :param response: Information retrieved from FormRequest() in parse()
-        :return: InvestingScraperItem instance to pipeline
+        :return: EarningScraperItem instance to pipeline
         """
         item = EarningScraperItem()
         data = response.body.decode('utf-8')
@@ -58,7 +58,7 @@ class EarnScrape(scrapy.Spider):
         date = datetime.now().strftime("%Y/%m/%d %H:%M:%S")
 
         for info in containers:
-            id_check = info.xpath(".//@_p_pid").extract_first()
+            id_check = info.xpath(".//@_p_pid").extract_first()  # Check for valid id or don't create item
             if info.xpath(".//td[contains(@class, 'theDay')]"):
                 date = info.xpath(".//td[contains(@class, 'theDay')]/text()").extract_first()
                 date = datetime.strptime(date, "%A, %B %d, %Y").strftime("%Y/%m/%d %H:%M:%S")
@@ -76,7 +76,7 @@ class EarnScrape(scrapy.Spider):
                 item['eps_actual'] = eps_actual
 
                 forecasts = info.xpath(".//td[contains(@class,'leftStrong')]/text()").extract()
-                eps_forecast = re.sub(r'/\xa0\xa0', '', forecasts[0])
+                eps_forecast = re.sub(r'/\xa0\xa0', '', forecasts[0])  # Remove non-breaking spaces
                 item['eps_forecast'] = eps_forecast
 
                 rev_actual = info.xpath(".//td[contains(@class,'rev_actual')]/text()").extract_first()
@@ -84,7 +84,7 @@ class EarnScrape(scrapy.Spider):
                 item['rev_actual'] = rev_actual_units[0]
                 item['rev_actual_units'] = rev_actual_units[1]
 
-                rev_forecast = re.sub(r'/\xa0\xa0', '', forecasts[1])
+                rev_forecast = re.sub(r'/\xa0\xa0', '', forecasts[1])  # Remove non-breaking spaces
                 rev_forecast_units = self.unit_splitter(rev_forecast)
                 item['rev_forecast'] = rev_forecast_units[0]
                 item['rev_forecast_units'] = rev_forecast_units[1]
@@ -92,6 +92,9 @@ class EarnScrape(scrapy.Spider):
                 yield item
 
     def unit_splitter(self, number):
+        """
+        When given a string, separate the numbers from their suffix's
+        """
         unit = re.search('([A-Za-z]+)|(%)', number)  # Check for units or %
         if unit:  # If units are found
             reg = re.compile(unit.group())  # Create regex to search unit

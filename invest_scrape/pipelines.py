@@ -7,7 +7,6 @@ from invest_scrape.settings import *
 class DatabaseComponents:
 
     def __init__(self, table_name, publish_name):
-
         """
         Initializes the database connection and redis server.
         """
@@ -22,7 +21,7 @@ class DatabaseComponents:
 
     def update_transaction(self, item, new_dict, old_dict, table):
         """
-        Check for differences between the item scraped and the row in the DB.
+        Check for differences between the items scraped and the row in the DB.
         If there has been a change update the field.
         """
 
@@ -69,10 +68,6 @@ class DatabaseComponents:
 
 
 class InvestingScraperPipeline(DatabaseComponents):
-    """
-    Pipeline to retrieve scraped fields from InvestingScraperItem instance and
-    send them to a Postgres database and redis server.
-    """
 
     def __init__(self):
         """
@@ -99,10 +94,10 @@ class InvestingScraperPipeline(DatabaseComponents):
 
     def process_item(self, item, spider):
         """
-        Automatically called after an item has been returned/yielded from a spider.
+        Automatically called after an item has been passed to the pipeline from a spider.
         It's where the pipeline processing begins.
 
-        Here new rows are inserted into the database changes in rows are updated.
+        Here new rows are inserted into the database and changes in rows are updated.
         """
 
         new_info = dict(
@@ -137,19 +132,14 @@ class InvestingScraperPipeline(DatabaseComponents):
 
 
 class EarningScraperPipeline(DatabaseComponents):
-    """
-    Pipeline to retrieve scraped fields from EarningScraperItem instance and
-    send them to a Postgres database and redis server.
-    """
 
     def __init__(self):
         """
         Initializes the database connection and redis server. Then the table is
-        loaded or created.
+        either loaded or created.
         """
         DatabaseComponents.__init__(self, 'earning_calendar', 'earning_calendar')
 
-        # Create table if it does not exist otherwise connect to existing table
         if self.table_name in self.db.tables:
             self.table = self.db.load_table(self.table_name)
         else:
@@ -169,10 +159,10 @@ class EarningScraperPipeline(DatabaseComponents):
 
     def process_item(self, item, spider):
         """
-        Automatically called after an item has been returned/yielded from a spider.
+        Automatically called after an item has been passed to the pipeline from a spider.
         It's where the pipeline processing begins.
 
-        Here new rows are inserted into the database changes in rows are updated.
+        Here new rows are inserted into the database and changes in rows are updated.
         """
 
         # Convert scraped item to dictionary.
@@ -209,10 +199,6 @@ class EarningScraperPipeline(DatabaseComponents):
 
 
 class NewsScraperPipeline(DatabaseComponents):
-    """
-    Pipeline to retrieve scraped fields from NewsScraperItem instance and
-    send them to a Postgres database and redis server.
-    """
 
     def __init__(self):
         """
@@ -234,10 +220,10 @@ class NewsScraperPipeline(DatabaseComponents):
 
     def process_item(self, item, spider):
         """
-        Automatically called after an item has been returned/yielded from a spider.
+        Automatically called after an item has been passed to the pipeline from a spider.
         It's where the pipeline processing begins.
 
-        Here new rows are inserted into the database.
+        Here if new rows are found, they are inserted into the database.
         """
 
         # Convert scraped item to dictionary.
@@ -250,7 +236,7 @@ class NewsScraperPipeline(DatabaseComponents):
             link=item['link'],
 
         )
-        if not self.table.find_one(id=new_info['id']):  # If pk doesn't exist insert row
+        if not self.table.find_one(id=new_info['id']):  # If PK doesn't exist insert row
             self.db.begin()
             try:
                 self.table.insert(new_info)

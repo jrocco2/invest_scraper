@@ -13,6 +13,14 @@ class NewsScrape(scrapy.Spider):
     start_urls = ["https://www.investing.com/news/stock-market-news"]
 
     def parse(self, response):
+        """
+        Automatically called to handle each of the requests for the start_urls.
+
+        For each news article, extract the id, date, title, author, text and link
+        and send it down the pipeline.
+
+        :param response: The GET response from the start url
+        """
         item = NewsScraperItem()
         containers = response.xpath("//div[contains(@class,'largeTitle')]/article[contains(@class,"
                                     "'articleItem')]/div[contains(@class,'textDiv')]")
@@ -20,7 +28,7 @@ class NewsScrape(scrapy.Spider):
 
             date = info.xpath(".//div[contains(@class,'articleDetails')]/span[contains(@class,'date')]/text()").extract_first()
             date = re.sub(r'\xa0-\xa0', '', date)
-            # Convert minutes ago to datetime
+            # Convert 'minutes ago' to datetime
             date = datetime.now() - timedelta(minutes=int(re.sub(r'[^0-9]', '', date)))  # Regex = Where not numeric
             item['date'] = date.strftime("%Y/%m/%d %H:%M:%S")
             earn_id = re.search(r'[0-9]{4,}', info.xpath(".//a/@onclick").extract_first())
