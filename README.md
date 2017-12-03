@@ -1,20 +1,9 @@
 # Investing Scraper
 
 Investing Scraper is an asynchronous webcrawler that utilises the Scrapy Framework. Its role is to scrape an economic calendar and automatically store the information in a Postgres database. Additionally, data can be subscribed to via Redis, allowing updates to be viewed in real time.
+### Packages:
 
-## Getting Started
-
-The following steps will get you up and running with the Investing Crawler. Note: this has only been tested with Python 3.5.3 from Anaconda
-
-### Clone Repository
-
-Get the repository manually by clicking the download button above or use the command line.
-```
-git clone https://github.com/jrocco2/investing_crawler.git
-```
-
-### Package Requirements
-Investing Scraper has a few package requirements you will need to install if you don't have them.
+There is a script shown in the <b>Install Packages</b> section that allows you to quickly download all of these at once.
 
 [Scrapy](https://doc.scrapy.org/en/0.10.3/intro/overview.html) - To build the asynchronous framework.
 
@@ -30,26 +19,44 @@ You will also need the following to deploy, schedule and monitor your crawling j
 
 [SpiderKeeper](https://github.com/DormyMo/SpiderKeeper) - A spider UI.
 
-To make sure you have all the packages go the project root directory and execute the following:
+## Getting Started in 3 Steps
+
+The following steps will get you up and running with the Investing Crawler. Note: this has only been tested with Python 3.5.3 from Anaconda
+
+### 1. Clone Repository
+
+Get the repository manually by clicking the download button above or use the command line.
+```
+git clone https://github.com/jrocco2/investing_crawler.git
+```
+
+### 2. Install Packages
+Requirements
+Investing Scraper has a few package requirements you will need to install if you don't have them. Run the command below in your root directory quickly dowload all the packages.
+
 ```
 python crawler_setup.py
 ```
+### 3. Configure the crawler
 
-### Configuring the crawler
-
-Now the crawler settings must be configured to connect to the Postgres and Redis databases. Open the settings.py file and edit the  POSTGRES_DB_URL, REDIS_HOST and REDIS_PORT to match your setup. Aditionally, you can also edit the POSTGRES_TABLE_NAME and REDIS_PUBLISH_NAME if you want but this optional.
+Now the crawler settings must be configured to connect to the Postgres and Redis databases. Open the settings.py file and edit the  POSTGRES_DB_URL, REDIS_HOST and REDIS_PORT to match your setup. 
 ```
 # settings.py
 POSTGRES_DB_URL = 'postgresql://joseph:password@localhost:5432/postgres'  # DB to connect to
-POSTGRES_TABLE_NAME = 'economic_calendar'  # If it doesnt exist it will be created
 REDIS_HOST = 'localhost'
 REDIS_PORT = 6379
-REDIS_PUBLISH_NAME = 'economic_calendar'
 ```
 ### Run the crawler
-From the root of the project run the following command in the terminal.
+From the root of the project you can run one of the following commands to run a crawler in the terminal.
+
+Economic Calendar:
 ```
 scrapy crawl invest_scrape
+```
+
+Earning Calendar:
+```
+scrapy crawl earn_scrape
 ```
 Congratulations! You just run your first job. A few things to note:
 1) Your Postgres Database will be now be populated with today's economic calendar data. If you haven't already created the table in your database the crawler will have created it for you.
@@ -83,17 +90,18 @@ spiderkeeper --server=http://localhost:6800 --no-auth
 ```
 This will create a server at http://localhost:5000 you can now access via your browser.
 
-## Schedule
+## Schedule - 1 Minute periodic jobs
 
 Do the following in the SpiderKeeper UI:
 
 1) Create a project with any name
-2) Upload the output.egg file in your root project directory
+2) Upload the output.egg file generated in the previous section
 3) Go to 'Periodic Jobs' then click 'Add Job' in the right hand corner
-4) Click 'Choose Minute' and set to 'every minute' and click 'Create'
-5) Done! Go to the 'Dashboard' to watch the jobs execute every minute.
+4) Select one of your spiders ('invest_scrape', 'earn_scrape', 'news_scrape'  )
+5) Click 'Choose Minute' and set to 'every minute' and click 'Create'
+6) Done! Go to the 'Dashboard' to watch the jobs execute every minute.
 
 ![running_jobs](https://github.com/jrocco2/invest_scraper/blob/master/SpiderKeeper6.JPG)
 
-## Crawl Speed Check
-In the dashboard you can see the log files. Opening the log files gives lots of valuable information including the start and end time for processing. Although it varies depending on the machine, my computer runs each job in 6-8 seconds.
+## Data Dictionaries
+
