@@ -1,6 +1,23 @@
 # Investing Scraper
 
 Investing Scraper is an asynchronous webcrawler that utilises the Scrapy Framework. Its role is to scrape an economic calendar and automatically store the information in a Postgres database. Additionally, data can be subscribed to via Redis, allowing updates to be viewed in real time.
+### Packages:
+
+There is a script shown in the <b>Install Packages</b> section that allows you to quickly download all of these at once.
+
+[Scrapy](https://doc.scrapy.org/en/0.10.3/intro/overview.html) - To build the asynchronous framework.
+
+[Dataset](https://dataset.readthedocs.io/en/latest/quickstart.html) - To access the Postgres database.
+
+[Redis](http://redis-py.readthedocs.io/en/latest/) - So that data can be subscribed to in real time.
+
+[Pandas](http://pandas.pydata.org/pandas-docs/stable/) - For easy data manipulation.
+
+You will also need the following to deploy, schedule and monitor your crawling jobs:
+
+[Scrapyd](http://scrapyd.readthedocs.io/en/stable/) - A Scrapy spider daemon.
+
+[SpiderKeeper](https://github.com/DormyMo/SpiderKeeper) - A spider UI.
 
 ## Getting Started in 3 Steps
 
@@ -20,24 +37,6 @@ Investing Scraper has a few package requirements you will need to install if you
 ```
 python crawler_setup.py
 ```
-### Packages
-[Scrapy](https://doc.scrapy.org/en/0.10.3/intro/overview.html) - To build the asynchronous framework.
-
-[Dataset](https://dataset.readthedocs.io/en/latest/quickstart.html) - To access the Postgres database.
-
-[Redis](http://redis-py.readthedocs.io/en/latest/) - So that data can be subscribed to in real time.
-
-[Pandas](http://pandas.pydata.org/pandas-docs/stable/) - For easy data manipulation.
-
-You will also need the following to deploy, schedule and monitor your crawling jobs:
-
-[Scrapyd](http://scrapyd.readthedocs.io/en/stable/) - A Scrapy spider daemon.
-
-[SpiderKeeper](https://github.com/DormyMo/SpiderKeeper) - A spider UI.
-
-To make sure you have all the packages go the project root directory and execute the following:
-
-
 ### 3. Configure the crawler
 
 Now the crawler settings must be configured to connect to the Postgres and Redis databases. Open the settings.py file and edit the  POSTGRES_DB_URL, REDIS_HOST and REDIS_PORT to match your setup. 
