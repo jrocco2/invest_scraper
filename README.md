@@ -27,7 +27,7 @@ The following steps will get you up and running with the Investing Crawler. Note
 
 Get the repository manually by clicking the download button above or use the command line.
 ```
-git clone https://github.com/jrocco2/investing_crawler.git
+git clone https://github.com/jrocco2/invest_scraper.git
 ```
 
 ### 2. Install Packages
