@@ -1,9 +1,7 @@
 # Investing Scraper
 
-Investing Scraper is an asynchronous webcrawler that utilises the Scrapy Framework. Its role is to scrape an economic calendar and automatically store the information in a Postgres database. Additionally, data can be subscribed to via Redis, allowing updates to be viewed in real time.
+Investing Scraper is an asynchronous webcrawler that utilises the Scrapy Framework. It scrapes an economic calendar, earnings calendar and stock market news and stores the information in a Postgres database. Additionally, data can be subscribed to via Redis Pubsub, allowing updates to be viewed in real time.
 ### Packages:
-
-There is a script shown in the <b>Install Packages</b> section that allows you to quickly download all of these at once.
 
 [Scrapy](https://doc.scrapy.org/en/0.10.3/intro/overview.html) - To build the asynchronous framework.
 
@@ -19,6 +17,8 @@ You will also need the following to deploy, schedule and monitor your crawling j
 
 [SpiderKeeper](https://github.com/DormyMo/SpiderKeeper) - A spider UI.
 
+There is a script shown in the <b>Install Packages</b> section that allows you to quickly download all of these at once.
+
 ## Getting Started in 3 Steps
 
 The following steps will get you up and running with the Investing Crawler. Note: this has only been tested with Python 3.5.3 from Anaconda
@@ -31,8 +31,9 @@ git clone https://github.com/jrocco2/investing_crawler.git
 ```
 
 ### 2. Install Packages
-Requirements
-Investing Scraper has a few package requirements you will need to install if you don't have them. Run the command below in your root directory quickly dowload all the packages.
+Requirements:
+
+Investing Scraper requires the packages listed above. IF you dont have them run the command below in your root directory to quickly dowload all the packages.
 
 ```
 python crawler_setup.py
@@ -42,7 +43,7 @@ python crawler_setup.py
 Now the crawler settings must be configured to connect to the Postgres and Redis databases. Open the settings.py file and edit the  POSTGRES_DB_URL, REDIS_HOST and REDIS_PORT to match your setup. 
 ```
 # settings.py
-POSTGRES_DB_URL = 'postgresql://joseph:password@localhost:5432/postgres'  # DB to connect to
+POSTGRES_DB_URL = 'postgresql://admin:password@localhost:5432/postgres'  # DB to connect to
 REDIS_HOST = 'localhost'
 REDIS_PORT = 6379
 ```
@@ -58,10 +59,16 @@ Earning Calendar:
 ```
 scrapy crawl earn_scrape
 ```
-Congratulations! You just run your first job. A few things to note:
-1) Your Postgres Database will be now be populated with today's economic calendar data. If you haven't already created the table in your database the crawler will have created it for you.
 
-You can run the economic_view.sql file to view current and upcoming events as well as compare 'actual' values to the 'forecast' values.
+Stock Market News:
+```
+scrapy crawl news_scrape
+```
+
+Congratulations! You just run your first job. A few things to note:
+1) Your Postgres Database will be now be populated with the data from the crawler you chose to run. The crawler automatically creates and populates the databse for you.
+
+If you ran the invest_scrape crawler, you can run the economic_view.sql file to view current and upcoming events as well as compare 'actual' values to the 'forecast' values.
 
 ![postgres_view](https://github.com/jrocco2/invest_scraper/blob/master/Postgres_view.JPG)
 
@@ -69,7 +76,7 @@ You can run the economic_view.sql file to view current and upcoming events as we
 ```
 #LOG_FILE = 'mylog.txt'
 ```
-3) The data was published with Redis. Assuming your using a locally hosted version of Redis and you didnt change the REDIS_PUBLISH_NAME then you can run the redis_subscribe.py file in a seperate terminal to view the data in real time.
+3) The data was published with Redis. Assuming your using a locally hosted version of Redis, you can run the redis_subscribe.py file in a seperate terminal to view new data entering in real time.
 ```
 python redis_subscribe.py
 ```
@@ -83,7 +90,7 @@ In the project root directory run the 'scrapyd' command.
 ```
 scrapyd
 ```
-Then in the projects root directory run a separate terminal with the following spiderkeeper commands package your crawler, to connect to the scrapyd server and deploy the user interface.
+Then in the projects root directory run a separate terminal with the following spiderkeeper commands to package your crawler, connect to the scrapyd server and deploy the user interface.
 ```
 python scrapyd-deploy --build-egg output.egg
 spiderkeeper --server=http://localhost:6800 --no-auth
@@ -103,5 +110,9 @@ Do the following in the SpiderKeeper UI:
 
 ![running_jobs](https://github.com/jrocco2/invest_scraper/blob/master/SpiderKeeper6.JPG)
 
-## Data Dictionaries
+## Invest Scrape
+
+## Earn Scrape
+
+## News Scrape
 
