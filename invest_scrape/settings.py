@@ -23,7 +23,5 @@ ROBOTSTXT_OBEY = True
 
 # Format is 'postgresql://username:password@domain/database'
 POSTGRES_DB_URL = 'postgresql://joseph:password@localhost:5432/postgres'  # DB to connect to
-POSTGRES_TABLE_NAME = 'economic_calendar'  # If it doesnt exist it will be created
 REDIS_HOST = 'localhost'
 REDIS_PORT = 6379
-REDIS_PUBLISH_NAME = 'economic_calendar'

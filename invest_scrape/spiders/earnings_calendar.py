@@ -3,6 +3,7 @@ from invest_scrape.items import EarningScraperItem
 import json
 from scrapy.selector import Selector
 import re
+from datetime import datetime
 
 class InvestScrape(scrapy.Spider):
     name = "earn_scrape"
@@ -58,7 +59,8 @@ class InvestScrape(scrapy.Spider):
         containers = Selector(text=data['data']).xpath("//tr")
         for info in containers:
             if info.xpath(".//td[contains(@class, 'theDay')]"):
-                 date = info.xpath(".//td[contains(@class, 'theDay')]/text()").extract_first()
+                date = info.xpath(".//td[contains(@class, 'theDay')]/text()").extract_first()
+                date = datetime.strptime(date, "%A, %B %d, %Y").strftime("%Y/%m/%d %H:%M:%S")
             else:
                 item['id'] = info.xpath(".//@_p_pid").extract_first()
                 item['date'] = date
@@ -70,15 +72,11 @@ class InvestScrape(scrapy.Spider):
                 item['market_time'] = int(info.xpath(".//@data-value").extract_first())
 
                 eps_actual = info.xpath(".//td[contains(@class,'eps_actual')]/text()").extract_first()
-                eps_actual_units = self.unit_splitter(eps_actual)
-                item['eps_actual'] = eps_actual_units[0]
-                item['eps_actual_units'] = eps_actual_units[1]
+                item['eps_actual'] = eps_actual
 
                 forecasts = info.xpath(".//td[contains(@class,'leftStrong')]/text()").extract()
                 eps_forecast = re.sub(r'/\xa0\xa0', '', forecasts[0])
-                eps_forecast_units = self.unit_splitter(eps_forecast)
-                item['eps_forecast'] = eps_actual_units[0]
-                item['eps_forecast_units'] = eps_actual_units[1]
+                item['eps_forecast'] = eps_forecast
 
                 rev_actual = info.xpath(".//td[contains(@class,'rev_actual')]/text()").extract_first()
                 rev_actual_units = self.unit_splitter(rev_actual)

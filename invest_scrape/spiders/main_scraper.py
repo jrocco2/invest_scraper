@@ -15,7 +15,6 @@ class InvestScrape(scrapy.Spider):
     # Define where the spider begins
     start_urls = ["https://www.investing.com/economic-calendar/"]
 
-
     def parse(self, response):
         """
         Automatically called to handle each of the requests for the start_urls.
@@ -39,7 +38,7 @@ class InvestScrape(scrapy.Spider):
                                                    '123', '61', '143', '4', '5', '138', '178', '84', '75'],
                                      'timeZone': '55',
                                      'timeFilter': 'timeRemain',
-                                     'currentTab': 'yesterday',
+                                     'currentTab': 'tomorrow',
                                      'submitFilters': '1',
                                      'limit_from': '0',
                                  },
