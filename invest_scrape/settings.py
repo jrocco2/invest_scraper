@@ -17,11 +17,7 @@ ROBOTSTXT_OBEY = True
 # Uncomment to add print statements to log
 #LOG_STDOUT = True
 
-# ITEM_PIPELINES = {
-#    'invest_scrape.pipelines.InvestingScraperPipeline': 300,
-# }
-
 # Format is 'postgresql://username:password@domain/database'
-POSTGRES_DB_URL = 'postgresql://joseph:password@localhost:5432/postgres'  # DB to connect to
+POSTGRES_DB_URL = 'postgresql://username:password@localhost:5432/postgres'  # DB to connect to
 REDIS_HOST = 'localhost'
 REDIS_PORT = 6379
