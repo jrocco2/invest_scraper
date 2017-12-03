@@ -70,7 +70,7 @@ Congratulations! You just run your first job. A few things to note:
 
 If you ran the invest_scrape crawler, you can run the economic_view.sql file to view current and upcoming events as well as compare 'actual' values to the 'forecast' values.
 
-![postgres_view](https://github.com/jrocco2/invest_scraper/blob/master/Postgres_view.JPG)
+![postgres_view](https://github.com/jrocco2/invest_scraper/blob/master/screenshots/Postgres_view.JPG)
 
 2) You received a large logfile output in the terminal if you want to save that as a txt file you can do so by going into settings.py and uncommenting LOG_FILE. This will store the log information in the project's root directory as 'mylog.txt'
 ```
@@ -82,7 +82,7 @@ python redis_subscribe.py
 ```
 
 ## Deploy
-![start_up](https://github.com/jrocco2/invest_scraper/blob/master/SpiderKeeper1.JPG)
+![start_up](https://github.com/jrocco2/invest_scraper/blob/master/screenshots/SpiderKeeper1.JPG)
 
 Now that the crawler is setup we can use the Scraypd and SpiderKeeper packages to keep the project running in the background as well as schedule periodic jobs and montior performance.
 
@@ -108,11 +108,4 @@ Do the following in the SpiderKeeper UI:
 5) Click 'Choose Minute' and set to 'every minute' and click 'Create'
 6) Done! Go to the 'Dashboard' to watch the jobs execute every minute.
 
-![running_jobs](https://github.com/jrocco2/invest_scraper/blob/master/SpiderKeeper6.JPG)
-
-## Invest Scrape
-
-## Earn Scrape
-
-## News Scrape
-
+![running_jobs](https://github.com/jrocco2/invest_scraper/blob/master/screenshots/SpiderKeeper6.JPG)
