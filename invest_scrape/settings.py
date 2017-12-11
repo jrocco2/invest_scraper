@@ -18,6 +18,14 @@ ROBOTSTXT_OBEY = True
 #LOG_STDOUT = True
 
 # Format is 'postgresql://username:password@domain/database'
-POSTGRES_DB_URL = 'postgresql://username:password@localhost:5432/postgres'  # DB to connect to
+POSTGRES_DB_URL = 'postgresql://admin:password@localhost:5432/postgres'  # DB to connect to
 REDIS_HOST = 'localhost'
 REDIS_PORT = 6379
+
+DOWNLOADER_MIDDLEWARES = {
+    'scrapy.downloadermiddlewares.useragent.UserAgentMiddleware': None,
+    'random_useragent.RandomUserAgentMiddleware': 400
+}
+
+# List of useragents to avoid being blocked
+USER_AGENT_LIST = "useragents.txt"
