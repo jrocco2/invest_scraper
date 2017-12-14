@@ -5,6 +5,8 @@ Investing Scraper is an asynchronous webcrawler that utilises the Scrapy Framewo
 
 [Scrapy](https://doc.scrapy.org/en/0.10.3/intro/overview.html) - To build the asynchronous framework.
 
+[Scrapy Random User-Agent](https://github.com/cnu/scrapy-random-useragent) - To avoid IP address blocking
+
 [Dataset](https://dataset.readthedocs.io/en/latest/quickstart.html) - To access the Postgres database.
 
 [Redis](http://redis-py.readthedocs.io/en/latest/) - So that data can be subscribed to in real time.
