@@ -4,6 +4,7 @@ import json
 from scrapy.selector import Selector
 import re
 from datetime import datetime
+import logging
 
 
 class EarnScrape(scrapy.Spider):
@@ -58,38 +59,43 @@ class EarnScrape(scrapy.Spider):
         date = datetime.now().strftime("%Y/%m/%d %H:%M:%S")
 
         for info in containers:
-            id_check = info.xpath(".//@_p_pid").extract_first()  # Check for valid id or don't create item
-            if info.xpath(".//td[contains(@class, 'theDay')]"):
-                date = info.xpath(".//td[contains(@class, 'theDay')]/text()").extract_first()
-                date = datetime.strptime(date, "%A, %B %d, %Y").strftime("%Y/%m/%d %H:%M:%S")
-            elif id_check:
-                item['id'] = id_check
-                item['date'] = date
-                item['country'] = info.xpath(".//td[contains(@class, 'flag')]/span/@title").extract_first()
-                item['company'] = info.xpath(".//td[contains(@class, 'earnCalCompany')]/span/text()").extract_first()
-                item['short_code'] = info.xpath(".//td[contains(@class, 'earnCalCompany')]/a/text()").extract_first()
-                item['market_cap'] = info.xpath(".//td[contains(@class,'right')]/text()").extract_first()
-                # Where 1 = Before Market Open, 2 = During Market, 3 = After Market Close
-                item['market_time'] = info.xpath(".//@data-value").extract_first()
 
-                eps_actual = info.xpath(".//td[contains(@class,'eps_actual')]/text()").extract_first()
-                item['eps_actual'] = eps_actual
+            try:
+                id_check = info.xpath(".//@_p_pid").extract_first()  # Check for valid id or don't create item
+                if info.xpath(".//td[contains(@class, 'theDay')]"):
+                    date = info.xpath(".//td[contains(@class, 'theDay')]/text()").extract_first()
+                    date = datetime.strptime(date, "%A, %B %d, %Y").strftime("%Y/%m/%d %H:%M:%S")
+                elif id_check:
+                    item['id'] = int(id_check)
+                    item['date'] = date
+                    item['country'] = info.xpath(".//td[contains(@class, 'flag')]/span/@title").extract_first()
+                    item['company'] = info.xpath(".//td[contains(@class, 'earnCalCompany')]/span/text()").extract_first()
+                    item['short_code'] = info.xpath(".//td[contains(@class, 'earnCalCompany')]/a/text()").extract_first()
+                    item['market_cap'] = info.xpath(".//td[contains(@class,'right')]/text()").extract_first()
+                    # Where 1 = Before Market Open, 2 = During Market, 3 = After Market Close
+                    item['market_time'] = info.xpath(".//@data-value").extract_first()
 
-                forecasts = info.xpath(".//td[contains(@class,'leftStrong')]/text()").extract()
-                eps_forecast = re.sub(r'/\xa0\xa0', '', forecasts[0])  # Remove non-breaking spaces
-                item['eps_forecast'] = eps_forecast
+                    eps_actual = info.xpath(".//td[contains(@class,'eps_actual')]/text()").extract_first()
+                    item['eps_actual'] = eps_actual
 
-                rev_actual = info.xpath(".//td[contains(@class,'rev_actual')]/text()").extract_first()
-                rev_actual_units = self.unit_splitter(rev_actual)
-                item['rev_actual'] = rev_actual_units[0]
-                item['rev_actual_units'] = rev_actual_units[1]
+                    forecasts = info.xpath(".//td[contains(@class,'leftStrong')]/text()").extract()
+                    eps_forecast = re.sub(r'/\xa0\xa0', '', forecasts[0])  # Remove non-breaking spaces
+                    item['eps_forecast'] = eps_forecast
 
-                rev_forecast = re.sub(r'/\xa0\xa0', '', forecasts[1])  # Remove non-breaking spaces
-                rev_forecast_units = self.unit_splitter(rev_forecast)
-                item['rev_forecast'] = rev_forecast_units[0]
-                item['rev_forecast_units'] = rev_forecast_units[1]
+                    rev_actual = info.xpath(".//td[contains(@class,'rev_actual')]/text()").extract_first()
+                    rev_actual_units = self.unit_splitter(rev_actual)
+                    item['rev_actual'] = rev_actual_units[0]
+                    item['rev_actual_units'] = rev_actual_units[1]
 
-                yield item
+                    rev_forecast = re.sub(r'/\xa0\xa0', '', forecasts[1])  # Remove non-breaking spaces
+                    rev_forecast_units = self.unit_splitter(rev_forecast)
+                    item['rev_forecast'] = rev_forecast_units[0]
+                    item['rev_forecast_units'] = rev_forecast_units[1]
+
+                    yield item
+            except:
+                print("Unusual format detected")
+                logging.warning("Item skipped due to unusual format")
 
     def unit_splitter(self, number):
         """

@@ -3,6 +3,7 @@ from invest_scrape.items import InvestingScraperItem
 import json
 from scrapy.selector import Selector
 import re
+import logging
 
 
 class InvestScrape(scrapy.Spider):
@@ -62,6 +63,8 @@ class InvestScrape(scrapy.Spider):
         print(len(containers))
         for info in containers:
 
+            try:
+
                 item['id'] = int(info.xpath(".//@event_attr_id").extract_first())
                 item['date'] = info.xpath(".//@data-event-datetime").extract_first()
                 item['currency'] = info.xpath(".//td[contains(@class,'left flagCur noWrap')]/text()").extract_first().strip()
@@ -97,6 +100,10 @@ class InvestScrape(scrapy.Spider):
                 item['previous_unit'] = previous_units[1]
 
                 yield item
+
+            except:
+                print("Unusual format detected")
+                logging.warning("Item skipped due to unusual format")
 
     def unit_splitter(self, number):
         """

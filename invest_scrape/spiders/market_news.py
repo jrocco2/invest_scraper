@@ -2,6 +2,8 @@ import scrapy
 from invest_scrape.items import NewsScraperItem
 from datetime import datetime, timedelta
 import re
+import logging
+
 
 class NewsScrape(scrapy.Spider):
     name = "news_scrape"
@@ -42,4 +44,6 @@ class NewsScrape(scrapy.Spider):
 
             except:
                 print("Unusual format detected")
+                logging.warning("Item skipped due to unusual format")
+
 
