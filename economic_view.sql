@@ -7,7 +7,7 @@ SELECT date::DATE as Date,
 
       CASE
         WHEN actual <> '' AND forecast <> '' THEN
-            ROUND(CAST(actual AS NUMERIC) - CAST(forecast AS NUMERIC),2)
+            replace(actual,',','')::numeric - replace(forecast,',','')::numeric
         ELSE
           NULL
         END
@@ -37,5 +37,5 @@ SELECT date::DATE as Date,
         END
       as Previous
 
-FROM  economic_calendar
-WHERE Date = timeofday()::DATE;
+FROM  economic_calendar;
+-- WHERE Date = timeofday()::DATE;

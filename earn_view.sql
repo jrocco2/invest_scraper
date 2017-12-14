@@ -7,7 +7,8 @@ SELECT date::DATE as Date,
 
       CASE
         WHEN eps_actual <> '--' AND eps_forecast <> '--' THEN
-            ROUND(CAST(eps_actual AS NUMERIC) - CAST(eps_forecast AS NUMERIC),2)
+            --ROUND(CAST(eps_actual AS NUMERIC) - CAST(eps_forecast AS NUMERIC),2)
+            replace(eps_actual,',','')::numeric - replace(eps_forecast,',','')::numeric
         ELSE
           NULL
         END
@@ -17,7 +18,8 @@ SELECT date::DATE as Date,
 
       CASE
         WHEN rev_actual <> '--' AND rev_forecast <> '--' THEN
-            ROUND(CAST(rev_actual AS NUMERIC) - CAST(rev_forecast AS NUMERIC),2)
+            --ROUND(CAST(rev_actual AS NUMERIC) - CAST(rev_forecast AS NUMERIC),2)
+            replace(rev_actual,',','')::numeric - replace(rev_forecast,',','')::numeric
         ELSE
           NULL
         END
@@ -27,7 +29,7 @@ SELECT date::DATE as Date,
         WHEN rev_actual = '--' THEN
           NULL
         ELSE
-          CAST(rev_actual AS NUMERIC)
+          replace(rev_actual,',','')::numeric
         END
       AS rev_actual,
 
@@ -35,7 +37,7 @@ SELECT date::DATE as Date,
         WHEN rev_forecast = '--' THEN
           NULL
         ELSE
-          CAST(rev_forecast AS NUMERIC)
+          replace(rev_forecast,',','')::numeric
         END
       AS rev_forecast,
 
@@ -50,5 +52,5 @@ SELECT date::DATE as Date,
       market_cap,
       market_time
 
-FROM  earning_calendar
-WHERE Date = timeofday()::DATE;
+FROM  earning_calendar;
+--WHERE Date = timeofday()::DATE;
