@@ -39,7 +39,7 @@ class InvestScrape(scrapy.Spider):
                                                    '123', '61', '143', '4', '5', '138', '178', '84', '75'],
                                      'timeZone': '55',  # GMT Time
                                      'timeFilter': 'timeRemain',
-                                     'currentTab': 'today',
+                                     'currentTab': 'thisWeek',
                                      'submitFilters': '1',
                                      'limit_from': '0',
                                  },
@@ -70,7 +70,7 @@ class InvestScrape(scrapy.Spider):
 
             try:
 
-                item['id'] = int(info.xpath(".//@event_attr_id").extract_first())
+                item['id'] = int(re.sub(r'eventRowId_', '', info.xpath(".//@id").extract_first()))
                 item['date'] = info.xpath(".//@data-event-datetime").extract_first()
                 item['currency'] = info.xpath(".//td[contains(@class,'left flagCur noWrap')]/text()").extract_first().strip()
 

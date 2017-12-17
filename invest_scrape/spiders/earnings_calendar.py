@@ -82,14 +82,14 @@ class EarnScrape(scrapy.Spider):
                     if eps_actual == '--':  # If -- is found set number to None
                         item['eps_actual'] = None
                     else:
-                        item['eps_actual'] = eps_actual
+                        item['eps_actual'] = float(eps_actual)
 
                     forecasts = info.xpath(".//td[contains(@class,'leftStrong')]/text()").extract()
                     eps_forecast = re.sub(r'/\xa0+', '', forecasts[0])  # Remove non-breaking spaces
                     if eps_forecast == '--':
                         item['eps_forecast'] = None
                     else:
-                        item['eps_forecast'] = eps_forecast
+                        item['eps_forecast'] = float(eps_forecast)
 
                     rev_actual = re.sub(r'/\xa0+|,', '', info.xpath(".//td[contains(@class,'rev_actual')]/text()").extract_first())
                     rev_actual_units = unit_splitter(rev_actual)

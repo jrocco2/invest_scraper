@@ -13,7 +13,7 @@ def unit_splitter(number):
         reg = re.compile(unit.group())  # Create regex to search unit
         return unit_to_number(re.sub(reg, '', number), unit.group())  # Call function to convert units
     else:  # For numbers with no units
-        return [number, '']
+        return [float(number), '']
 
 
 def unit_to_number(number, unit):
@@ -29,8 +29,8 @@ def unit_to_number(number, unit):
 
     if unit in unit_dict:  # If the units matches one of our units convert it to base form and remove unit.
         return [round(float(number) * unit_dict[unit]), '']
-    elif unit == "%":  # If it doesn't match, return the number and unit separately
-        return [number, unit]
+    elif unit == "%":
+        return [float(number), unit]
     else:
         logging.warning("Unknown unit in unit_to_number()")
         raise ValueError("Unknown unit in unit_to_number()")
