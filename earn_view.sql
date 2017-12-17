@@ -1,14 +1,15 @@
+DROP VIEW IF EXISTS EARNING_VIEW;
+
 CREATE VIEW EARNING_VIEW AS
 SELECT date::DATE as Date,
       date::TIME as TIME,
       country,
       company,
-      short_code,
+      short_code as CODE,
 
       CASE
-        WHEN eps_actual <> '--' AND eps_forecast <> '--' THEN
-            --ROUND(CAST(eps_actual AS NUMERIC) - CAST(eps_forecast AS NUMERIC),2)
-            replace(eps_actual,',','')::numeric - replace(eps_forecast,',','')::numeric
+        WHEN eps_actual IS NOT NULL AND eps_forecast IS NOT NULL THEN
+          ROUND(CAST(eps_actual AS NUMERIC) - CAST(eps_forecast AS NUMERIC),2)
         ELSE
           NULL
         END
@@ -17,38 +18,15 @@ SELECT date::DATE as Date,
       eps_forecast,
 
       CASE
-        WHEN rev_actual <> '--' AND rev_forecast <> '--' THEN
-            --ROUND(CAST(rev_actual AS NUMERIC) - CAST(rev_forecast AS NUMERIC),2)
-            replace(rev_actual,',','')::numeric - replace(rev_forecast,',','')::numeric
+        WHEN rev_actual IS NOT NULL AND rev_forecast IS NOT NULL THEN
+            rev_actual - rev_forecast
         ELSE
           NULL
         END
       AS rev_comparison,
 
-      CASE
-        WHEN rev_actual = '--' THEN
-          NULL
-        ELSE
-          replace(rev_actual,',','')::numeric
-        END
-      AS rev_actual,
-
-      CASE
-        WHEN rev_forecast = '--' THEN
-          NULL
-        ELSE
-          replace(rev_forecast,',','')::numeric
-        END
-      AS rev_forecast,
-
-      CASE
-        WHEN  rev_actual_units = rev_forecast_units THEN
-          rev_actual_units
-        ELSE
-          NULL
-        END
-      AS rev_units,
-
+      rev_actual,
+      rev_forecast,
       market_cap,
       market_time
 

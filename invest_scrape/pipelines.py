@@ -30,8 +30,6 @@ class DatabaseComponents:
 
         # Check for differences between the two dictionaries
         update_dict = dict(new_info.items() - old_dict.items())
-        print(new_info.items())
-        print(old_dict.items())
         # If DB row and scraped item are different, update the fields that differ.
         if update_dict:
             update_dict['id'] = item['id']
