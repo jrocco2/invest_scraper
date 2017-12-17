@@ -104,11 +104,8 @@ class InvestingScraperPipeline(DatabaseComponents):
             importance=item['importance'],
             event=item['event'],
             actual=item['actual'],
-            #actual_unit=item['actual_unit'],
             forecast=item['forecast'],
-            #forecast_unit=item['forecast_unit'],
             previous=item['previous'],
-            #previous_unit=item['previous_unit'],
             unit=item['unit'],
         )
 
