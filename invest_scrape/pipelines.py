@@ -85,12 +85,10 @@ class InvestingScraperPipeline(DatabaseComponents):
             self.table.create_column('currency', self.db.types.string)
             self.table.create_column('importance', self.db.types.integer)
             self.table.create_column('event', self.db.types.string)
-            self.table.create_column('actual', self.db.types.string)
-            self.table.create_column('actual_unit', self.db.types.string)
-            self.table.create_column('forecast', self.db.types.string)
-            self.table.create_column('forecast_unit', self.db.types.string)
-            self.table.create_column('previous', self.db.types.string)
-            self.table.create_column('previous_unit', self.db.types.string)
+            self.table.create_column('actual', self.db.types.float)
+            self.table.create_column('forecast', self.db.types.float)
+            self.table.create_column('previous', self.db.types.float)
+            self.table.create_column('unit', self.db.types.string)
 
     def process_item(self, item, spider):
         """
@@ -107,11 +105,12 @@ class InvestingScraperPipeline(DatabaseComponents):
             importance=item['importance'],
             event=item['event'],
             actual=item['actual'],
-            actual_unit=item['actual_unit'],
+            #actual_unit=item['actual_unit'],
             forecast=item['forecast'],
-            forecast_unit=item['forecast_unit'],
+            #forecast_unit=item['forecast_unit'],
             previous=item['previous'],
-            previous_unit=item['previous_unit'],
+            #previous_unit=item['previous_unit'],
+            unit=item['unit'],
         )
 
         # Query the database to see if the item exists in the DB.
@@ -148,13 +147,11 @@ class EarningScraperPipeline(DatabaseComponents):
             self.table.create_column('country', self.db.types.string)
             self.table.create_column('company', self.db.types.string)
             self.table.create_column('short_code', self.db.types.string)
-            self.table.create_column('eps_actual', self.db.types.string)
-            self.table.create_column('eps_forecast', self.db.types.string)
-            self.table.create_column('rev_actual', self.db.types.string)
-            self.table.create_column('rev_actual_units', self.db.types.string)
-            self.table.create_column('rev_forecast', self.db.types.string)
-            self.table.create_column('rev_forecast_units', self.db.types.string)
-            self.table.create_column('market_cap', self.db.types.string)
+            self.table.create_column('eps_actual', self.db.types.float)
+            self.table.create_column('eps_forecast', self.db.types.float)
+            self.table.create_column('rev_actual', self.db.types.bigint)
+            self.table.create_column('rev_forecast', self.db.types.bigint)
+            self.table.create_column('market_cap', self.db.types.bigint)
             self.table.create_column('market_time', self.db.types.string)
 
     def process_item(self, item, spider):
@@ -175,9 +172,7 @@ class EarningScraperPipeline(DatabaseComponents):
             eps_actual=item['eps_actual'],
             eps_forecast=item['eps_forecast'],
             rev_actual=item['rev_actual'],
-            rev_actual_units=item['rev_actual_units'],
             rev_forecast=item['rev_forecast'],
-            rev_forecast_units=item['rev_forecast_units'],
             market_cap=item['market_cap'],
             market_time=item['market_time'],
         )

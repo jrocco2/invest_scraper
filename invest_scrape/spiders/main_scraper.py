@@ -1,5 +1,6 @@
 import scrapy
 from invest_scrape.items import InvestingScraperItem
+from invest_scrape.spiders.shared.spider_functions import *
 import json
 from scrapy.selector import Selector
 import re
@@ -63,6 +64,10 @@ class InvestScrape(scrapy.Spider):
         print(len(containers))
         for info in containers:
 
+            # item = InvestingScraperItem()  # Enable this when debugging (and comment out above one)
+            # this will refresh the class on each iteration. Therefore missing items of the class will not show when
+            # printed in the except statement below and may be the where the error is coming from.
+
             try:
 
                 item['id'] = int(info.xpath(".//@event_attr_id").extract_first())
@@ -83,35 +88,33 @@ class InvestScrape(scrapy.Spider):
 
                 item['event'] = info.xpath(".//a[contains(@target,'_blank')]/text()").extract_first().strip()
 
+                # r'\xa0|,' === search for "\xa0" and\or "," and remove it
                 # Separate units from integer
-                actual = re.sub(r'\xa0', '', info.xpath(".//td[starts-with(@id, 'eventActual_')]/text()").extract_first())
-                actual_units = self.unit_splitter(actual)
+                actual = re.sub(r'\xa0|,', '', info.xpath(".//td[starts-with(@id, 'eventActual_')]/text()").extract_first())
+                actual_units = unit_splitter(actual)
                 item['actual'] = actual_units[0]
-                item['actual_unit'] = actual_units[1]
 
-                forecast = re.sub(r'\xa0', '',info.xpath(".//td[starts-with(@id, 'eventForecast_')]/text()").extract_first())
-                forecast_units = self.unit_splitter(forecast)
+                forecast = re.sub(r'\xa0|,', '',info.xpath(".//td[starts-with(@id, 'eventForecast_')]/text()").extract_first())
+                forecast_units = unit_splitter(forecast)
                 item['forecast'] = forecast_units[0]
-                item['forecast_unit'] = forecast_units[1]
 
-                previous = re.sub(r'\xa0', '',info.xpath(".//td[starts-with(@id, 'eventPrevious_')]/span/text()").extract_first())
-                previous_units = self.unit_splitter(previous)
+                previous = re.sub(r'\xa0|,', '',info.xpath(".//td[starts-with(@id, 'eventPrevious_')]/span/text()").extract_first())
+                previous_units = unit_splitter(previous)
                 item['previous'] = previous_units[0]
-                item['previous_unit'] = previous_units[1]
+
+                if (actual_units[1] == '%') or (forecast_units[1] == '%') or (previous_units[1] == '%'):
+                    item['unit'] = '%'
+                else:
+                    item['unit'] = ''
 
                 yield item
 
+            except ValueError as err:
+                logging.warning("ValueError error: {0}".format(err))
+                print(vars(item))
+            except TypeError as err:
+                logging.warning("TypeError error: {0}".format(err))
+                print(vars(item))
             except:
-                print("Unusual format detected")
-                logging.warning("Item skipped due to unusual format")
-
-    def unit_splitter(self, number):
-        """
-        When given a string, separate the numbers from their suffix's
-        """
-        unit = re.search('([A-Za-z]+)|(%)', number)  # Check for units or %
-        if unit:  # If units are found
-            reg = re.compile(unit.group())  # Create regex to search unit
-            return [re.sub(reg, '', number), unit.group()]
-        else:
-            return [number, '']
+                logging.warning("Item skipped due to unknown error")
+                print(vars(item))
